@@ -9,7 +9,9 @@ export default [
   {
     input: 'src/index.js',
     external: [
-      'react'
+      'react',
+      'react-query',
+      'react-hook-form',
     ],
     output: [
       {file: pkg.main, format: 'cjs', sourcemap: true, },
