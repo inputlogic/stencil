@@ -1,4 +1,3 @@
-import {useForm} from 'react-hook-form'
 import {useState} from 'react'
 
 const AddAccount = ({
@@ -8,7 +7,7 @@ const AddAccount = ({
 }) => {
   const [addAccountOpen, setAddAccountOpen] = useState(false)
   const loginMutation = stencil.mutations.usePublicUserLoginMutation()
-  const LoginForm = useForm('publicUserLogin', 'post')
+  const LoginForm = stencil.useForm('publicUserLogin', 'post')
   const Fields = LoginForm.Fields
   const onSubmit = async ({ email, username, password }) => {
     const response = await loginMutation.mutateAsync({ email, username, password })
