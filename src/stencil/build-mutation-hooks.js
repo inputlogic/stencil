@@ -1,8 +1,9 @@
-import {useMutation} from 'react-query'
+// TODO: figure out how to import directly
+// import {useMutation} from 'react-query'
 
 // TODO: error handling
 export const buildMutationHooks = (doc, stencil) => {
-  const toHookName = (name, method) => toolkit.strings.pathAndMethodToMutationHook(path, method)
+  const toHookName = (name, method) => stencil.strings.pathAndMethodToMutationHook(path, method)
   return {
     mutations: Object.entries(doc.paths).reduce((acc, [path, methods]) => ({
       ...acc,
@@ -11,7 +12,7 @@ export const buildMutationHooks = (doc, stencil) => {
         [stencil.strings.pathAndMethodToMutationHook(path, method)]: ({args, reactQueryArgs = {}} = {}) => {
           const token = stencil.config.useToken?.()
           // const defaultErrorHandler = stencil.config.mutations?.useDefaultErrorHandler?.()
-          return useMutation(data => stencil.fetch(stencil.strings.pathToName(path), {
+          return stencil.config.reactQuery.useMutation(data => stencil.fetch(stencil.strings.pathToName(path), {
             method,
             data,
             args,

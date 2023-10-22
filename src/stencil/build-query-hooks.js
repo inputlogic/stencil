@@ -1,4 +1,7 @@
-import {useQuery} from 'react-query'
+// TODO: figure out how to import useQuery without this breaking
+// "No QueryClient set, use QueryClientProvider to set one" when used
+// in another project
+// import {useQuery} from 'react-query'
 
 export const buildQueryHooks = (doc, stencil) => ({
     queries: Object.entries(doc.paths).reduce((acc, [path, methods]) => {
@@ -16,7 +19,7 @@ export const buildQueryHooks = (doc, stencil) => ({
         [toHookName(name)]: isList
           ? ({ args = {}, queries = {}, reactQueryArgs = {} } = {}) => {
               const token = stencil.config.useToken?.()
-              const reactQuery = useQuery(
+              const reactQuery = stencil.config.reactQuery.useQuery(
                 [
                   name,
                   ...Object.entries(args).flatMap((x) => x),
@@ -32,7 +35,7 @@ export const buildQueryHooks = (doc, stencil) => ({
             }
           : ({ args = {}, queries = {}, reactQueryArgs = {} } = {}) => {
               const token = stencil.config.useToken?.()
-              const reactQuery = useQuery(
+              const reactQuery = stencil.config.reactQuery.useQuery(
                 [
                   name,
                   ...Object.entries(args).flatMap((x) => x),

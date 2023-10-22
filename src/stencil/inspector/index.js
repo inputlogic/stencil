@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query'
+// import { useQuery } from 'react-query'
 import { Config } from './config'
 import { UseFormInspector } from './use-form-inspector'
 import { UseQueryInspector } from './use-query-inspector'
@@ -19,7 +19,7 @@ export const Inspector = ({stencil: originalStencil}) => {
   )
   const activeOpenapiUrl = config?.activeOpenapiUrl
   const activeOpenapi = config?.openapiUrls?.[activeOpenapiUrl]
-  const openapiDoc = useQuery(
+  const openapiDoc = originalStencil.config.reactQuery.useQuery(
     ['stencil', 'openapiDoc', activeOpenapiUrl],
     () => fetch(activeOpenapiUrl).then(res => res.json()),
     {enabled: activeOpenapiUrl !== 'local'}
