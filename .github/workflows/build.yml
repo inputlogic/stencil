@@ -28,4 +28,4 @@ jobs:
           cp .gitignore.keepbuild .gitignore
           git add .
           git commit -m "Add changes"
-          git push origin build
+          git push -f origin build
