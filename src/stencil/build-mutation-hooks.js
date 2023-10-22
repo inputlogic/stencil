@@ -1,5 +1,4 @@
-// TODO: figure out how to import directly
-// import {useMutation} from 'react-query'
+import {useMutation} from 'react-query'
 
 // TODO: error handling
 export const buildMutationHooks = (doc, stencil) => {
@@ -12,7 +11,7 @@ export const buildMutationHooks = (doc, stencil) => {
         [stencil.strings.pathAndMethodToMutationHook(path, method)]: ({args, reactQueryArgs = {}} = {}) => {
           const token = stencil.config.useToken?.()
           // const defaultErrorHandler = stencil.config.mutations?.useDefaultErrorHandler?.()
-          return stencil.config.reactQuery.useMutation(data => stencil.fetch(stencil.strings.pathToName(path), {
+          return useMutation(data => stencil.fetch(stencil.strings.pathToName(path), {
             method,
             data,
             args,

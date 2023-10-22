@@ -1,3 +1,4 @@
+import { FormProvider, useForm } from 'react-hook-form'
 import {buildFormComponents} from './build-form-components'
 import {getDefaultComponent} from './get-default-component'
 import {drfDefaultErrorHandler} from '../../utils/drf-default-error-handler'
@@ -18,7 +19,6 @@ export const buildForms = ({config: {path, name, method, theme, anyTheme}, FormE
 }
 
 const buildForm = ({stencil, path, method, FormComponent, Fields, FormError, Button, useDefaultMutation}) => {
-  const { FormProvider, useForm } = stencil.config.reactHookForm
   const FormWithDefaultValues = ({useDefaultValues, ...props}) => {
     const [defaultValues, { error }] = useDefaultValues()
     if (error) {
