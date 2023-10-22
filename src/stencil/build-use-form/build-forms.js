@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {buildFormComponents} from './build-form-components'
 import {getDefaultComponent} from './get-default-component'
@@ -29,7 +30,7 @@ const buildForm = ({stencil, path, method, FormComponent, Fields, FormError, But
   }
 
   const Form = ({validation, defaultValues, onSubmit: onSubmitProp, ...props}) => {
-    const [metadata, setMetadata] = stencil.config.react.useState({})
+    const [metadata, setMetadata] = useState({})
     const methods = useForm({
       defaultValues,
       ...(validation

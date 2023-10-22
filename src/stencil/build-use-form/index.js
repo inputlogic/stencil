@@ -1,3 +1,4 @@
+import {useMemo} from 'react'
 import {buildFields} from './build-fields'
 import {buildButtons} from './build-buttons'
 import {buildFormErrors} from './build-form-errors'
@@ -7,7 +8,7 @@ import {getDefaultComponent} from './get-default-component'
 
 export const buildUseForm = (doc, stencil) => ({
   useForm: (name, method, {additionalFields = {}, theme = 'default', anyTheme = true} = {}) => {
-    return stencil.config.react.useMemo(
+    return useMemo(
       () => {
         const {path, details} = findPathAndDetails({name, method, doc, stencil})
         const properties = {

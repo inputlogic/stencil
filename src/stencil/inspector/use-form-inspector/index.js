@@ -1,8 +1,9 @@
+import {useState} from 'react'
 import JsonView from 'react18-json-view'
-import {useFormContext} from 'react-hook-form'
+import {useFormContext, useForm} from 'react-hook-form'
 
 export const UseFormInspector = ({stencil}) => {
-	const [form, setForm] = stencil.config.react.useState(null)
+	const [form, setForm] = useState(null)
 	return (
 		<div>
       <h3>Use Form Inspector</h3>
@@ -30,8 +31,8 @@ export const UseFormInspector = ({stencil}) => {
 }
 
 const FormPreview = ({stencil, formName, method}) => {
-  const [resourceId, setResourceId] = stencil.config.react.useState()
-  const Form = stencil.useForm(formName, method)
+  const [resourceId, setResourceId] = useState()
+  const Form = useForm(formName, method)
   const isDetail = formName.endsWith('Detail')
   return <div>
     {isDetail && (
