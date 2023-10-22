@@ -10,7 +10,7 @@ export default [
     input: 'src/index.js',
     external: [
       'react',
-      'react-query',
+      '@tanstack/react-query',
       'react-hook-form',
     ],
     output: [
