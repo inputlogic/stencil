@@ -8,6 +8,9 @@ import pkg from './package.json' assert { type: "json" }
 export default [
   {
     input: 'src/index.js',
+    external: [
+      'react'
+    ],
     output: [
       {file: pkg.main, format: 'cjs', sourcemap: true, },
       {file: pkg.module, format: 'es', sourcemap: true}
