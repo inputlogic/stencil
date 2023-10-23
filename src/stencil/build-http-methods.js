@@ -8,9 +8,9 @@ const checkIsProbablyJson = ({body, headers}) => {
 const parseResponse = async (response) => {
   const contentType = response.headers.get('Content-Type');
   if (/application\/json/.test(contentType)) {
-    return response.json()
+    return await response.json()
   } else if (/text/.test(contentType)) {
-    return response.text()
+    return await response.text()
   } else if (response.status === 204) {
     return null
   }

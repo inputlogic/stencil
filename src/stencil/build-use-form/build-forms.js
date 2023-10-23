@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {buildFormComponents} from './build-form-components'
-import {getDefaultComponent} from './get-default-component'
+import {getDefaultComponent} from '../../utils/get-default-component'
 
 export const buildForms = ({config: {path, name, method, theme, anyTheme}, FormError, Button, Fields}, stencil) => {
   const useDefaultMutation = stencil.mutations[
