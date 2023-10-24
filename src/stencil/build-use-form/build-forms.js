@@ -20,23 +20,18 @@ export const buildForms = ({config: {path, name, method, theme, anyTheme}, FormE
 }
 
 const buildForm = ({stencil, path, method, FormComponent, Fields, FormError, Button, useDefaultMutation}) => {
-  const FormWithDefaultValues = ({useDefaultValues, ...props}) => {
+  const FormWithDefaultValues = ({useDefaultValues, useFormOptions = {}, ...props}) => {
     const [defaultValues, { error }] = useDefaultValues()
     if (error) {
       return <div> TODO: Loading Error</div>
     }
     if (!defaultValues) return <div>TODO: Loading...</div>
-    return <Form defaultValues={defaultValues} {...props} />
+    return <Form useFormOptions={{defaultValues: defaultValues, ...useFormOptions}} {...props} />
   }
 
-  const Form = ({validation, defaultValues, onSubmit: onSubmitProp, ...props}) => {
+  const Form = ({validation, onSubmit: onSubmitProp, useFormOptions = {}, ...props}) => {
     const [metadata, setMetadata] = useState({})
-    const methods = useForm({
-      defaultValues,
-      ...(validation
-        ? { resolver: yupResolver(y.object().shape(validation)) }
-        : {}),
-    })
+    const methods = useForm(useFormOptions)
     const onSubmit = async (ev) => {
       methods.clearErrors('root')
       try {
