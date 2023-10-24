@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {buildFormComponents} from './build-form-components'
 import {getDefaultComponent} from './get-default-component'
-import {drfDefaultErrorHandler} from '../../utils/drf-default-error-handler'
 
 export const buildForms = ({config: {path, name, method, theme, anyTheme}, FormError, Button, Fields}, stencil) => {
   const useDefaultMutation = stencil.mutations[
@@ -34,23 +33,18 @@ const buildForm = ({stencil, path, method, FormComponent, Fields, FormError, But
     const methods = useForm(useFormOptions)
     const onSubmit = async (ev) => {
       methods.clearErrors('root')
-      try {
-        await methods.handleSubmit(async (data) => {
+      await methods.handleSubmit(async (data) => {
+        try {
           await onSubmitProp?.(data, {reactHookFormMethods: methods})
           setMetadata((curr) => ({ ...curr, success: true }))
           setTimeout(() => {
-            // if (isMounted.current) {
             setMetadata((curr) => ({ ...curr, success: false }))
-            // }
           }, 2000)
-        })(ev)
-      } catch (error) {
-        // TODO: extra error handler
-        // methods.setError('root', )
-        console.error('Form error', error)
-        const errorHandler = stencil.config.useForm?.errorHandler || drfDefaultErrorHandler
-        errorHandler(error, methods)
-      }
+        } catch (error) {
+          console.error('Form error', error)
+          stencil.config.useForm?.errorHandler?.(error, {reactHookFormMethods: methods})
+        }
+      })(ev)
     }
     return <FormProvider {...methods} metadata={metadata} setMetadata={setMetadata} >
       <FormComponent onSubmit={onSubmit} {...props} />
