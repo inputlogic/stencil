@@ -62,3 +62,18 @@ Stencil is the object that is returned by `buildStencil`. It has a number of use
 -   `queries` **Object where all keys are [generatedQueryHooks](#generatedQueryHook)**: All of the generated react-query hooks for the `get` resources. Eg. for a `public/posts` endpoint there will be a `stencil.queries.usePublicPosts` hook.
 
 ## generatedQueryHook
+
+TODO: add documentation about stencil.queries
+
+## useForm
+
+### Args
+
+-   `name` **String**: The name of the url (you can see all available names in `stencil.urls`)
+-   `method` **String**: The http method of the form (eg. `post`, `patch`, `delete`)
+-   `options` **[useFormOptions](useFormOptions)**: 
+
+#### useFormOptions
+
+-   `theme` **String**: Which theme to use, defaults to `default`
+-   `useFormOptions` **reactHookFormUseFormOptions**: The object that will get passed to react-hook-form's `useForm`, this is where you can pass along a resolver for validation, or manually pass defaultValues.
