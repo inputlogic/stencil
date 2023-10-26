@@ -4,6 +4,7 @@ import { buildHttpMethods } from './build-http-methods'
 import { buildQueryHooks } from './build-query-hooks'
 import { buildMutationHooks } from './build-mutation-hooks'
 import { buildUseForm } from './build-use-form'
+import { buildUseList } from './build-use-list'
 
 const validateConfig = (config) => {
 	// TODO: add README and link to it
@@ -38,8 +39,7 @@ export const buildStencil = (doc, config) => {
     buildMutationHooks,
     // buildComponents,
     buildUseForm,
-    // buildOpenApiUseForm,
-    // buildOpenApiTables,
+    buildUseList,
   ]
 
   return toolBuilders.reduce(

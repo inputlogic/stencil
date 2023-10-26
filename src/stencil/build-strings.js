@@ -1,6 +1,6 @@
 import * as Case from 'case'
 
-export const buildStrings = () => {
+export const buildStrings = (doc) => {
   const pathToName = (path) => Case.camel(path.replace(/(.+)\{(.+)\}/g, '$1Detail'))
 
   const pathToJSPath = (path) => path.replace(/(.+)\{(.+)\}/g, '$1:$2')
@@ -29,7 +29,8 @@ export const buildStrings = () => {
       pathAndMethodToHttp,
       pathToQueryHook,
       pathAndMethodToMutationHook,
-      nameToHookName: name => `use${Case.pascal(name)}`
+      nameToHookName: name => `use${Case.pascal(name)}`,
+      nameToOpenapiPath: name => Object.keys(doc.paths).find(path => name === pathToName(path))
     },
   }
 }

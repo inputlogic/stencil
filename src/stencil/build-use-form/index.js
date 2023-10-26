@@ -4,7 +4,7 @@ import {buildButtons} from './build-buttons'
 import {buildFormErrors} from './build-form-errors'
 import {buildForms} from './build-forms'
 import {buildFormComponents} from './build-form-components'
-import {getDefaultComponent} from './get-default-component'
+import {getDefaultComponent} from '../../utils/get-default-component'
 
 export const buildUseForm = (doc, stencil) => ({
   useForm: (name, method, {additionalFields = {}, theme = 'default', anyTheme = true} = {}) => {

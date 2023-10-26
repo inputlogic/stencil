@@ -1,22 +1,7 @@
 import * as Case from 'case'
 
-import {getDefaultComponent} from './get-default-component'
-
-const safeComponents = (components, stencil) => new Proxy(components, {
-  get: (target, prop) => {
-    if (prop in target) {
-      return target[prop]
-    }
-    return (props) => {
-      // TODO: only show this when in development?
-      // TODO: add README
-      console.warn(`You are trying to access a field, "${prop}", that does not exist.`, `The fields that are available are: ${Object.keys(target).join(', ')}. You can manually add fields using the additionalFields prop on the stencil.useForm.`)
-      if (stencil.config.devMode) {
-        return <div>{`Warning: You are trying to access a field, "${prop}", that does not exist.`}</div>
-      }
-    }
-  }
-})
+import {getDefaultComponent} from '../../utils/get-default-component'
+import {safeComponents} from '../../utils/safe-components'
 
 export const buildFields = ({config: {properties, theme, anyTheme}}, stencil) => {
   const AllFields = buildAllFields({properties, stencil})
@@ -26,7 +11,18 @@ export const buildFields = ({config: {properties, theme, anyTheme}}, stencil) =>
   }), {})
   return {
     AllFields,
-    Fields: safeComponents(Fields, stencil)
+    Fields: safeComponents({
+      components: Fields,
+      stencil,
+      warningComponent: ({name, availableNames}) => (props) => {
+        // TODO: only show this when in development?
+        // TODO: add link to README
+        console.warn(`You are trying to access a field, "${name}", that does not exist.`, `The fields that are available are: ${availableNames.join(', ')}. You can manually add fields using the additionalFields prop on the stencil.useForm.`)
+        if (stencil.config.devMode) {
+          return <div>{`Warning: You are trying to access a field, "${name}", that does not exist.`}</div>
+        }
+      }
+    })
   }
 }
 
