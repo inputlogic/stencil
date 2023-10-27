@@ -1,10 +1,19 @@
+import * as Case from 'case'
 import {useRouter} from 'next/router'
 import {useMemo} from 'react'
 import {buildFilters} from './build-filters'
 import {buildComponents} from '../../utils/build-components'
 
 export const buildUseList = (doc, stencil) => ({
-  useList: (name, {theme = 'default', anyTheme = true, id, useQuery: useQueryProvided, pageSize = 20, ...options} = {}) => {
+  useList: (name, {
+    theme = 'default',
+    anyTheme = true,
+    id,
+    useQuery: useQueryProvided,
+    pageSize = 20,
+    loader,
+    ...options
+  } = {}) => {
     id = id || name
     const router = useRouter()
     return useMemo(
@@ -21,7 +30,7 @@ export const buildUseList = (doc, stencil) => ({
           buildUseQuery,
           buildUseQueryCount,
           buildEmptyStates,
-          buildLoading,
+          buildLoaders,
           buildLoadingErrors,
           buildPaginations,
           buildFilters,
@@ -31,7 +40,7 @@ export const buildUseList = (doc, stencil) => ({
         return builders.reduce((acc, builder) => ({
           ...acc,
           ...builder(acc, stencil)
-        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path, pageSize}})
+        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path, pageSize, loader}})
       },
       [name]
     )
@@ -103,15 +112,16 @@ const noNulls = (obj) =>
     return acc
   }, {})
 
-const buildList = ({useQuery, EmptyState, Loading, LoadingError}) => ({
+const buildList = ({useQuery, EmptyState, Loader, LoadingError, AllLoaders, config: {loader, theme}}) => ({
     List: ({queries, children, ...props}) => {
+      const LoaderComponent = getLoaderComponent({AllLoaders, DefaultLoader: Loader, theme, loader})
       const [results, {error, isLoading}] = useQuery({queries})
       const Child = children
       if (!EmptyState) {
         console.warn('no EmptyState component found. Please add at least one to config.useList.emptyStates')
       }
-      if (!Loading) {
-        console.warn('no Loading component found. Please add at least one to config.useList.loading')
+      if (!LoaderComponent) {
+        console.warn('no Loading component found. Please add at least one to config.useList.loader')
       }
       if (!LoadingError) {
         console.warn('no LoadingError component found. Please add at least one to config.useList.loadingErrors')
@@ -121,13 +131,30 @@ const buildList = ({useQuery, EmptyState, Loading, LoadingError}) => ({
         return
       }
       return <>
-        {isLoading && (Loading ? <Loading /> : '')}
+        {isLoading && (Loader ? <Loader /> : '')}
         {error && (LoadingError ? <LoadingError error={error} /> : '')}
         {results?.length === 0 && (EmptyState ? <EmptyState /> : '')}
         {results?.length > 0 && <Child results={results} /> }
       </>
     }
 })
+
+const getLoaderComponent = ({AllLoaders, DefaultLoader, theme, loader}) => {
+  if (!loader) {
+    return DefaultLoader
+  }
+  if (typeof loader === 'string') {
+    const Component = AllLoaders[Case.pascal(`${theme}${loader}`)] || Object
+      .entries(AllLoaders)
+      .sort(([n1, c1], [n2, c2]) => c1.priority > c2.priority ? -1 : 1)
+      .find(([name, component]) => name === Case.pascal(`${component.theme}${loader}`))?.[1]
+    if (!Component) {
+      console.warn(`Could not find loader component with name ${loader}`)
+      return <DefaultLoader />
+    }
+  }
+  return loader
+}
 
 const buildEmptyStates = ({config: {theme, anyTheme}}, stencil) => {
   const res = buildComponents({
@@ -140,13 +167,13 @@ const buildEmptyStates = ({config: {theme, anyTheme}}, stencil) => {
   return res
 }
 
-const buildLoading = ({config: {theme, anyTheme}}, stencil) => {
+const buildLoaders = ({config: {theme, anyTheme}}, stencil) => {
   const res = buildComponents({
     stencil,
-    components: stencil.config.useList?.loading || [],
+    components: stencil.config.useList?.loaders || [],
     theme,
     anyTheme,
-    name: 'Loading'
+    name: 'Loader'
   })
   return res
 }
