@@ -131,7 +131,7 @@ const buildList = ({useQuery, EmptyState, Loader, LoadingError, AllLoaders, conf
         return
       }
       return <>
-        {isLoading && (Loader ? <Loader /> : '')}
+        {isLoading && (LoaderComponent ? <LoaderComponent /> : '')}
         {error && (LoadingError ? <LoadingError error={error} /> : '')}
         {results?.length === 0 && (EmptyState ? <EmptyState /> : '')}
         {results?.length > 0 && <Child results={results} /> }
@@ -150,8 +150,9 @@ const getLoaderComponent = ({AllLoaders, DefaultLoader, theme, loader}) => {
       .find(([name, component]) => name === Case.pascal(`${component.theme}${loader}`))?.[1]
     if (!Component) {
       console.warn(`Could not find loader component with name ${loader}`)
-      return <DefaultLoader />
+      return DefaultLoader
     }
+    return Component
   }
   return loader
 }
