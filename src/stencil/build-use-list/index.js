@@ -19,6 +19,7 @@ export const buildUseList = (doc, stencil) => ({
           buildSetQueryParam,
           buildUseQueryParam,
           buildUseQuery,
+          buildUseQueryCount,
           buildEmptyStates,
           buildLoading,
           buildLoadingErrors,
@@ -64,17 +65,26 @@ const buildUseQueryParam = ({config: {router, id}}) => ({
 
 const buildUseQuery = ({config: {router, id, useQueryProvided, path, pageSize}}, stencil) => {
   const useBaseQuery = useQueryProvided || stencil.queries[stencil.strings.pathToQueryHook(path)]
-
-
   return {
     useQuery: ({queries: customQueries = {}, ...rest} = {}) => {
       const router = useRouter()
-      console.log('yooo', pageSize, page)
       const {page = 1, ...queries} = parseQuery(id, router.query)
       return useBaseQuery({queries: {...queries, limit: pageSize, offset: pageSize * (page - 1), ...customQueries}})
     }
   }
 }
+
+// Returns the total count of the results for the current query
+// with current filters. Once loaded, this value will not reload
+// on page change.
+const buildUseQueryCount = ({useQuery, useQueryCount}, stencil) => ({
+  useQueryCount: () => {
+    const [_, { count }] = useQuery({
+      queries: { limit: 0, offset: 0 },
+    })
+    return count
+  }
+})
 
 const parseQuery = (id, query) =>
   Object.entries(query).reduce((acc, [k, v]) => {
@@ -152,13 +162,13 @@ const buildLoadingErrors = ({config: {theme, anyTheme}}, stencil) => {
   return res
 }
 
-const buildPaginations = ({useQuery, setQueryParam, useQueryParam, calculateNewQuery, config: {theme, anyTheme, pageSize}}, stencil) => {
+const buildPaginations = ({useQuery, setQueryParam, useQueryCount, useQueryParam, calculateNewQuery, config: {theme, anyTheme, pageSize}}, stencil) => {
   const res = buildComponents({
     stencil,
     components: stencil.config.useList?.paginations || [],
     theme,
     anyTheme,
-    componentParams: {useQuery, setQueryParam, useQueryParam, calculateNewQuery, pageSize},
+    componentParams: {useQuery, useQueryCount, setQueryParam, useQueryParam, calculateNewQuery, pageSize},
     name: 'Pagination'
   })
   return res
