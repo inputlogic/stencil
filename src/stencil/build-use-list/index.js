@@ -4,7 +4,7 @@ import {buildFilters} from './build-filters'
 import {buildComponents} from '../../utils/build-components'
 
 export const buildUseList = (doc, stencil) => ({
-  useList: (name, {theme = 'default', anyTheme = true, id, useQuery: useQueryProvided, ...options} = {}) => {
+  useList: (name, {theme = 'default', anyTheme = true, id, useQuery: useQueryProvided, pageSize = 20, ...options} = {}) => {
     id = id || name
     const router = useRouter()
     return useMemo(
@@ -22,6 +22,7 @@ export const buildUseList = (doc, stencil) => ({
           buildEmptyStates,
           buildLoading,
           buildLoadingErrors,
+          buildPaginations,
           buildFilters,
           buildList,
         ]
@@ -29,58 +30,56 @@ export const buildUseList = (doc, stencil) => ({
         return builders.reduce((acc, builder) => ({
           ...acc,
           ...builder(acc, stencil)
-        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path}})
+        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path, pageSize}})
       },
       [name]
     )
   }
 })
 
-const buildSetQueryParam = ({config: {router, id}}) => ({
-  setQueryParam: (name, value) => {
-    router.replace({
-      pathname: router.pathname,
-      query: noNulls({
-        ...router.query,
-        [`${id}.page`]: null,
-        [`${id}.f.${name}`]: value,
-      }),
-    })
+const buildSetQueryParam = ({config: {router, id}}) => {
+  const calculateNewQuery = (name, value) => ({
+    pathname: router.pathname,
+    query: noNulls({
+      ...router.query,
+      ...name !== 'page' ? {[`${id}.page`]: null} : {},
+      [`${id}.${name}`]: value,
+    }),
+  })
+  return {
+    calculateNewQuery,
+    setQueryParam: (name, value) => {
+      router.replace(calculateNewQuery(name, value))
+    }
   }
-})
+}
 
 const buildUseQueryParam = ({config: {router, id}}) => ({
   useQueryParam: name => {
     const router = useRouter()
     const queries = parseQuery(id, router.query)
-    return queries.filters?.[name]
+    return queries[name]
   }
 })
 
-const buildUseQuery = ({config: {router, id, useQueryProvided, path}}, stencil) => {
+const buildUseQuery = ({config: {router, id, useQueryProvided, path, pageSize}}, stencil) => {
   const useBaseQuery = useQueryProvided || stencil.queries[stencil.strings.pathToQueryHook(path)]
+
 
   return {
     useQuery: ({queries: customQueries = {}, ...rest} = {}) => {
       const router = useRouter()
-      const queries = parseQuery(id, router.query)
-      return useBaseQuery({queries: {...customQueries, ...queries.filters}})
+      console.log('yooo', pageSize, page)
+      const {page = 1, ...queries} = parseQuery(id, router.query)
+      return useBaseQuery({queries: {...queries, limit: pageSize, offset: pageSize * (page - 1), ...customQueries}})
     }
   }
 }
 
-
 const parseQuery = (id, query) =>
   Object.entries(query).reduce((acc, [k, v]) => {
     if (k.startsWith(`${id}.`)) {
-      if (k.startsWith(`${id}.f.`)) {
-        acc.filters = {
-          ...(acc.filters || {}),
-          [k.slice(id.length + 3)]: v,
-        }
-      } else {
-        acc[k.slice(id.length + 1)] = v
-      }
+      acc[k.slice(id.length + 1)] = v
     }
     return acc
   }, {})
@@ -149,6 +148,18 @@ const buildLoadingErrors = ({config: {theme, anyTheme}}, stencil) => {
     theme,
     anyTheme,
     name: 'LoadingError'
+  })
+  return res
+}
+
+const buildPaginations = ({useQuery, setQueryParam, useQueryParam, calculateNewQuery, config: {theme, anyTheme, pageSize}}, stencil) => {
+  const res = buildComponents({
+    stencil,
+    components: stencil.config.useList?.paginations || [],
+    theme,
+    anyTheme,
+    componentParams: {useQuery, setQueryParam, useQueryParam, calculateNewQuery, pageSize},
+    name: 'Pagination'
   })
   return res
 }
