@@ -46,7 +46,7 @@ export const buildHttpMethods = (doc, stencil) => {
     fetch: (name, {method, args, queries, data, token} = {}) => {
       return _fetch(stencil.url(name, { args, queries }), {
         ...!data ? {} : {body: data},
-        method,
+        method: method?.toUpperCase(),
         token,
       })
     },
@@ -67,7 +67,7 @@ export const buildHttpMethods = (doc, stencil) => {
 					} = {}) => {
             return _fetch(stencil.url(name, { args, params: queries }), {
               ...!data ? {} : {body: data},
-              method,
+              method: method?.toUpperCase(),
               token,
             })
 					},
