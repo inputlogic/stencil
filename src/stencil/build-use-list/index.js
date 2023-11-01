@@ -12,6 +12,7 @@ export const buildUseList = (doc, stencil) => ({
     useQuery: useQueryProvided,
     pageSize = 20,
     loader,
+    queries = {},
     ...options
   } = {}) => {
     id = id || name
@@ -40,7 +41,7 @@ export const buildUseList = (doc, stencil) => ({
         return builders.reduce((acc, builder) => ({
           ...acc,
           ...builder(acc, stencil)
-        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path, pageSize, loader}})
+        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path, pageSize, loader, queries}})
       },
       [name]
     )
@@ -72,13 +73,13 @@ const buildUseQueryParam = ({config: {router, id}}) => ({
   }
 })
 
-const buildUseQuery = ({config: {router, id, useQueryProvided, path, pageSize}}, stencil) => {
+const buildUseQuery = ({config: {router, id, useQueryProvided, path, pageSize, queries: customInitialQueries}}, stencil) => {
   const useBaseQuery = useQueryProvided || stencil.queries[stencil.strings.pathToQueryHook(path)]
   return {
     useQuery: ({queries: customQueries = {}, ...rest} = {}) => {
       const router = useRouter()
       const {page = 1, ...queries} = parseQuery(id, router.query)
-      return useBaseQuery({queries: {...queries, limit: pageSize, offset: pageSize * (page - 1), ...customQueries}})
+      return useBaseQuery({queries: {...customInitialQueries, ...queries, limit: pageSize, offset: pageSize * (page - 1), ...customQueries}})
     }
   }
 }
