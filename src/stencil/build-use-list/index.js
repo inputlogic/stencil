@@ -12,6 +12,7 @@ export const buildUseList = (doc, stencil) => ({
     useQuery: useQueryProvided,
     pageSize = 20,
     loader,
+    emptyState,
     queries = {},
     ...options
   } = {}) => {
@@ -41,7 +42,7 @@ export const buildUseList = (doc, stencil) => ({
         return builders.reduce((acc, builder) => ({
           ...acc,
           ...builder(acc, stencil)
-        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path, pageSize, loader, queries}})
+        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path, pageSize, loader, emptyState, queries}})
       },
       [name]
     )
@@ -113,9 +114,11 @@ const noNulls = (obj) =>
     return acc
   }, {})
 
-const buildList = ({useQuery, EmptyState, Loader, LoadingError, AllLoaders, config: {loader, theme}}) => ({
+const buildList = ({useQuery, EmptyState, Loader, LoadingError, AllLoaders, AllEmptyStates, config: {loader, emptyState, theme}}) => ({
     List: ({queries, children, ...props}) => {
+      // TODO: refactor finding the empty state and loader components
       const LoaderComponent = getLoaderComponent({AllLoaders, DefaultLoader: Loader, theme, loader})
+      const EmptyStateComponent = getEmptyStateComponent({AllEmptyStates, DefaultEmptyState: EmptyState, theme, emptyState})
       const [results, {error, isLoading}] = useQuery({queries})
       const Child = children
       if (!EmptyState) {
@@ -134,7 +137,7 @@ const buildList = ({useQuery, EmptyState, Loader, LoadingError, AllLoaders, conf
       return <>
         {isLoading && (LoaderComponent ? <LoaderComponent /> : '')}
         {error && (LoadingError ? <LoadingError error={error} /> : '')}
-        {results?.length === 0 && (EmptyState ? <EmptyState /> : '')}
+        {results?.length === 0 && (EmptyState ? <EmptyStateComponent /> : '')}
         {results?.length > 0 && <Child results={results} /> }
       </>
     }
@@ -156,6 +159,24 @@ const getLoaderComponent = ({AllLoaders, DefaultLoader, theme, loader}) => {
     return Component
   }
   return loader
+}
+
+const getEmptyStateComponent = ({AllEmptyStates, DefaultEmptyState, theme, emptyState}) => {
+  if (!emptyState) {
+    return DefaultEmptyState
+  }
+  if (typeof emptyState === 'string') {
+    const Component = AllEmptyStates[Case.pascal(`${theme}${emptyState}`)] || Object
+      .entries(AllEmptyStates)
+      .sort(([n1, c1], [n2, c2]) => c1.priority > c2.priority ? -1 : 1)
+      .find(([name, component]) => name === Case.pascal(`${component.theme}${emptyState}`))?.[1]
+    if (!Component) {
+      console.warn(`Could not find empty state component with name ${emptyState}`)
+      return DefaultEmptyState
+    }
+    return Component
+  }
+  return emptyState
 }
 
 const buildEmptyStates = ({config: {theme, anyTheme}}, stencil) => {
