@@ -3,7 +3,6 @@ import {buildFields} from './build-fields'
 import {buildButtons} from './build-buttons'
 import {buildFormErrors} from './build-form-errors'
 import {buildForms} from './build-forms'
-import {buildFormComponents} from './build-form-components'
 import {getDefaultComponent} from '../../utils/get-default-component'
 
 export const buildUseForm = (doc, stencil) => ({
