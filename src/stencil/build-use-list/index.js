@@ -4,18 +4,22 @@ import {useMemo, useRef} from 'react'
 import {buildFilters} from './build-filters'
 import {buildComponents} from '../../utils/build-components'
 
+const DEFAULT_PAGE_SIZE = 20
+
 export const buildUseList = (doc, stencil) => ({
   useList: (name, {
     theme = 'default',
     anyTheme = true,
     id,
     useQuery: useQueryProvided,
-    pageSize = 20,
     loader,
     emptyState,
-    queries = {},
+    defaultQueries = {},
+    additionalFilters = [],
     ...options
   } = {}) => {
+    const baseQueries = {limit: stencil.config.useList?.defaultPageSize || DEFAULT_PAGE_SIZE}
+    defaultQueries = {...baseQueries, ...defaultQueries}
     id = id || name
     const router = useRouter()
     /*
@@ -33,7 +37,7 @@ export const buildUseList = (doc, stencil) => ({
         if (!path) {
           throw Error(`No endpoint named ${name}`)
         }
-        const properties = doc.paths[path].get.parameters
+        const properties = [...doc.paths[path].get.parameters || [], ...additionalFilters]
 
         const builders = [
           buildSetQueryParam,
@@ -61,10 +65,9 @@ export const buildUseList = (doc, stencil) => ({
           id,
           useQueryProvided,
           path,
-          pageSize,
+          defaultQueries,
           loader,
           emptyState,
-          queries
         }})
       },
       [name]
@@ -85,25 +88,36 @@ const buildSetQueryParam = ({config: {getCurrentQuery, router, id}}) => {
     calculateNewQuery,
     setQueryParam: (name, value) => {
       router.replace(calculateNewQuery(name, value))
+    },
+    resetQueryParams: () => {
+      router.replace({
+        pathname: router.pathname,
+        query: Object.fromEntries(Object.entries(getCurrentQuery()).filter(([name, value]) => !name.startsWith(`${id}.`)))
+      })
     }
   }
 }
 
-const buildUseQueryParam = ({config: {router, id}}) => ({
+const buildUseQueryParam = ({config: {id, defaultQueries}}) => ({
   useQueryParam: name => {
     const router = useRouter()
     const queries = parseQuery(id, router.query)
-    return queries[name]
+    return queries.hasOwnProperty(name) ? queries[name] : defaultQueries[name]
+  },
+  useQueryParams: () => {
+    const router = useRouter()
+    return parseQuery(id, router.query)
   }
 })
 
-const buildUseQuery = ({config: {router, id, useQueryProvided, path, pageSize, queries: customInitialQueries}}, stencil) => {
+const buildUseQuery = ({config: {router, id, useQueryProvided, path, defaultQueries}, useQueryParam}, stencil) => {
   const useBaseQuery = useQueryProvided || stencil.queries[stencil.strings.pathToQueryHook(path)]
   return {
     useQuery: ({queries: customQueries = {}, ...rest} = {}) => {
+      const limit = useQueryParam('limit')
       const router = useRouter()
       const {page = 1, ...queries} = parseQuery(id, router.query)
-      return useBaseQuery({queries: {...customInitialQueries, ...queries, limit: pageSize, offset: pageSize * (page - 1), ...customQueries}})
+      return useBaseQuery({queries: {...defaultQueries, limit, offset: limit * (page - 1), ...queries, ...customQueries}})
     }
   }
 }
@@ -235,13 +249,13 @@ const buildLoadingErrors = ({config: {theme, anyTheme}}, stencil) => {
   return res
 }
 
-const buildPaginations = ({useQuery, setQueryParam, useQueryCount, useQueryParam, calculateNewQuery, config: {theme, anyTheme, pageSize}}, stencil) => {
+const buildPaginations = ({useQuery, setQueryParam, useQueryCount, useQueryParam, calculateNewQuery, config: {theme, anyTheme}}, stencil) => {
   const res = buildComponents({
     stencil,
     components: stencil.config.useList?.paginations || [],
     theme,
     anyTheme,
-    componentParams: {useQuery, useQueryCount, setQueryParam, useQueryParam, calculateNewQuery, pageSize},
+    componentParams: {useQuery, useQueryCount, setQueryParam, useQueryParam, calculateNewQuery},
     name: 'Pagination'
   })
   return res
