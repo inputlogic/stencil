@@ -1,6 +1,6 @@
 import * as Case from 'case'
 import {useRouter} from 'next/router'
-import {useMemo} from 'react'
+import {useMemo, useRef} from 'react'
 import {buildFilters} from './build-filters'
 import {buildComponents} from '../../utils/build-components'
 
@@ -18,6 +18,15 @@ export const buildUseList = (doc, stencil) => ({
   } = {}) => {
     id = id || name
     const router = useRouter()
+    /*
+     * Inside of useMemo there are functions that need to access the current router.query values
+     * However, we don't want to re-run useMemo every time router.query changes.
+     * Using a ref allows us to get the current query values
+     * rather than the ones that exist when useMemo is built.
+     * (see getCurrentQuery)
+     */
+    const routerRef = useRef()
+    routerRef.current = router
     return useMemo(
       () => {
         const path = stencil.strings.nameToOpenapiPath(name)
@@ -42,18 +51,32 @@ export const buildUseList = (doc, stencil) => ({
         return builders.reduce((acc, builder) => ({
           ...acc,
           ...builder(acc, stencil)
-        }), {config: {properties, name, theme, anyTheme, router, id, useQueryProvided, path, pageSize, loader, emptyState, queries}})
+        }), {config: {
+          properties,
+          name,
+          theme,
+          anyTheme,
+          getCurrentQuery: () => routerRef.current.query,
+          router: routerRef.current,
+          id,
+          useQueryProvided,
+          path,
+          pageSize,
+          loader,
+          emptyState,
+          queries
+        }})
       },
       [name]
     )
   }
 })
 
-const buildSetQueryParam = ({config: {router, id}}) => {
+const buildSetQueryParam = ({config: {getCurrentQuery, router, id}}) => {
   const calculateNewQuery = (name, value) => ({
     pathname: router.pathname,
     query: noNulls({
-      ...router.query,
+      ...getCurrentQuery(),
       ...name !== 'page' ? {[`${id}.page`]: null} : {},
       [`${id}.${name}`]: value,
     }),
