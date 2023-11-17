@@ -7,7 +7,7 @@ export const buildQueryHooks = (doc, stencil) => ({
 
       const properties =
         methods.get.responses[200].content['application/json'].schema.properties
-      const isList = properties.count && properties.next && properties.resources
+      const isList = properties.count && properties.next && properties.results
 
       const toHookName = stencil.strings.nameToHookName
 
