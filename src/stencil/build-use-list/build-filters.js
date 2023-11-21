@@ -5,14 +5,14 @@ import {safeComponents} from '../../utils/safe-components'
 import {getPriority} from '../../utils/get-priority'
 
 export const buildFilters = ({config: {properties, theme, anyTheme}, setQueryParam, useQueryParam}, stencil) => {
-  const AllFilters = buildAllFilters({stencil, properties, componentArgs: {setQueryParam, useQueryParam}})
-  const Filters = Object.entries(AllFilters).reduce((acc, [name, components]) => ({
+  const Filters = buildAllFilters({stencil, properties, componentArgs: {setQueryParam, useQueryParam}})
+  const DefaultFilters = Object.entries(Filters).reduce((acc, [name, components]) => ({
     ...acc,
     [name]: getDefaultComponent({components, theme, anyTheme})
   }), {})
   return {
-    AllFilters,
-    Filters: safeComponents({
+    Filters,
+    DefaultFilters: safeComponents({
       components: Filters,
       stencil,
       warningComponent: ({name, availableNames}) => (props) => {
@@ -48,7 +48,7 @@ const buildFilterComponent = ({name, details, stencil, componentArgs}) => {
   return stencil.config?.useList?.filters?.reduce((acc, filter) => {
     if (filter.predicate({name, details})) {
       const component = filter.component({name, details, ...componentArgs})
-      const theme = filter.theme ? capitalize(filter.theme) : 'Default'
+      const theme = Case.pascal(filter.theme || '')
       component.priority = getPriority({priority: filter.priority, args: {name, details}})
       acc[`${theme}${filter.name}`] = component
     }

@@ -5,14 +5,15 @@ import {getPriority} from '../../utils/get-priority'
 import {safeComponents} from '../../utils/safe-components'
 
 export const buildFields = ({config: {properties, theme, anyTheme}}, stencil) => {
-  const AllFields = buildAllFields({properties, stencil})
-  const Fields = Object.entries(AllFields).reduce((acc, [name, components]) => ({
+  const Fields = buildAllFields({properties, stencil})
+  const DefaultFields = Object.entries(Fields).reduce((acc, [name, components]) => ({
     ...acc,
     [name]: getDefaultComponent({components, theme, anyTheme})
   }), {})
   return {
-    AllFields: safeComponents({
-      components: AllFields,
+    // TODO: Update this to be safe at the field and component level
+    Fields: safeComponents({
+      components: Fields,
       stencil,
       warningComponent: ({name, availableNames}) => (props) => {
         // TODO: only show this when in development?
@@ -23,8 +24,8 @@ export const buildFields = ({config: {properties, theme, anyTheme}}, stencil) =>
         }
       }
     }),
-    Fields: safeComponents({
-      components: Fields,
+    DefaultFields: safeComponents({
+      components: DefaultFields,
       stencil,
       warningComponent: ({name, availableNames}) => (props) => {
         // TODO: only show this when in development?
@@ -77,7 +78,7 @@ const buildFieldComponent = ({name, details, stencil}) => {
   return stencil.config?.useForm?.fields?.reduce((acc, field) => {
     if (field.predicate({name, details})) {
       const component = field.component({name, details})
-      const theme = field.theme ? capitalize(field.theme) : 'Default'
+      const theme = Case.pascal(field.theme || '')
       component.priority = getPriority({priority: field.priority, args: {name, details}})
       acc[`${theme}${field.name}`] = component
     }
