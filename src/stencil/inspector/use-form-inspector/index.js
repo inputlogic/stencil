@@ -44,7 +44,7 @@ const FormPreview = ({stencil, formName, method}) => {
     <Form.Form resourceId={resourceId}>
       <div>
         <div>
-          {Object.values(Form.Fields).map((Field, i) => <Field key={i} />)}
+          {Object.values(Form.DefaultFields).map((Field, i) => <Field key={i} />)}
         </div>
         <div>
           <FormData stencil={stencil} />

@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form'
 import {buildComponents} from './build-components'
 import {getDefaultComponent} from '../../utils/get-default-component'
 
-export const buildForms = ({config: {path, name, method, theme, anyTheme}, FormError, Button, Fields}, stencil) => {
+export const buildForms = ({config: {path, name, method, theme, anyTheme}, FormError, Button, DefaultFields}, stencil) => {
   const useDefaultMutation = stencil.mutations[
     stencil.strings.pathAndMethodToMutationHook(name, method)
   ]
@@ -14,11 +14,11 @@ export const buildForms = ({config: {path, name, method, theme, anyTheme}, FormE
   const DefaultBasicForm = getDefaultComponent({components: AllBasicForms, theme, anyTheme})
   return {
     useDefaultMutation,
-    Form: buildForm({stencil, path, method, FormComponent: DefaultBasicForm, Fields, FormError, Button, useDefaultMutation})
+    Form: buildForm({stencil, path, method, FormComponent: DefaultBasicForm, DefaultFields, FormError, Button, useDefaultMutation})
   }
 }
 
-const buildForm = ({stencil, path, method, FormComponent, Fields, FormError, Button, useDefaultMutation}) => {
+const buildForm = ({stencil, path, method, FormComponent, DefaultFields, FormError, Button, useDefaultMutation}) => {
   const FormWithDefaultValues = ({useDefaultValues, useFormOptions = {}, ...props}) => {
     const [defaultValues, { error }] = useDefaultValues()
     if (error) {
@@ -73,7 +73,7 @@ const buildForm = ({stencil, path, method, FormComponent, Fields, FormError, But
         ? children
         : <>
           <FormError />
-          {Object.values(Fields).map((Field, i) => <Field key={i} />)}
+          {Object.values(DefaultFields).map((Field, i) => <Field key={i} />)}
           <Button>Submit</Button>
         </>
       }
