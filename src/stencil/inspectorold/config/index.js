@@ -1,12 +1,14 @@
-import { useContext } from 'react'
 import { assocPath, dissocPath } from 'ramda'
 import {useState, useEffect} from 'react'
-import { StencilContext } from '../context'
 import { Accounts } from './accounts'
 import { ServerUrl } from './server-url'
+// import { useStateWithLocalStorage } from '../../../utils/use-state-with-local-storage'
 
-export const Config = ({}) => {
-  const {stencil, config, setConfig} = useContext(StencilContext)
+export const Config = ({stencil, config, setConfig}) => {
+  // const [config, setConfig] = useStateWithLocalStorage(
+  //   'stencil-inspector',
+  //   {url: process.env.NEXT_PUBLIC_STENCIL_OPENAPI_URL}
+  // )
   const [openapiUrl, setOpenapiUrl] = useState()
   const onClickApply = (ev) => {
     // TODO: check that it is a valid openapi url before setting it.
@@ -53,10 +55,23 @@ export const Config = ({}) => {
     ))
   }
   return <div>
+    <h2>Config</h2>
+    <h4>Openapi Url</h4>
     <div>
       <input placeholder='Openapi Url' onChange={ev => setOpenapiUrl(ev.target.value)} />
       <button onClick={onClickApply} >Apply</button>
     </div>
+    <div>
+        {Object.keys(config?.openapiUrls || {}).map(url =>
+          <div key={url}>
+            {url}
+            {url === config?.activeOpenapiUrl && ' (active)'}
+            {url !== 'local' && <button onClick={(ev) => onClickRemove(url)} >Remove</button>}
+            {url !== config?.activeOpenapiUrl && <button onClick={ev => onClickSetActive(url)} >Set Active</button>}
+          </div>
+        )}
+    </div>
+    <br />
     {stencil && <ServerUrl stencil={stencil} servers={servers || []} setServers={setServers} activeServerUrl={activeServerUrl} setActiveServer={setActiveServer} />}
     <br />
     {stencil && <Accounts stencil={stencil} accounts={accounts || []} setAccounts={setAccounts} />}

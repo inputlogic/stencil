@@ -26,7 +26,6 @@ export const Accounts = ({stencil, accounts, setAccounts}) => {
     setAccounts(updatedAccounts)
   }
   const onClickSetActive = (account) => {
-    console.log('on click set active', account, accounts)
     const updatedAccounts = accounts.map(({ email, ...rest }) => ({
       ...rest,
       email,
