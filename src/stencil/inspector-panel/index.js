@@ -26,6 +26,11 @@ export const InspectorPanel = ({ options = FAKE_OPTIONS }) => {
     const filter = ev.target.value
     updateFilter(filter)
   }
+  useEffect(() => {
+    setFilteredOptions(options)
+    setFlattenedOptions(flattenOptions(options))
+    setFilter('')
+  }, [options])
   useKeyboard((key, ev) => {
     const isActive = inputRef.current === document.activeElement
     if (!isActive) return

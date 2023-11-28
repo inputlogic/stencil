@@ -22,7 +22,6 @@ export const Inspector = ({stencil: originalStencil}) => {
       }
     }
   )
-  console.log('config', config)
   const activeOpenapiUrl = config?.activeOpenapiUrl
   const activeOpenapi = config?.openapiUrls?.[activeOpenapiUrl]
   const openapiDoc = useQuery(
@@ -32,7 +31,6 @@ export const Inspector = ({stencil: originalStencil}) => {
   )
   const activeServerUrl = activeOpenapi?.activeServerUrl
   const activeAccount = activeOpenapi?.servers?.[activeServerUrl]?.accounts?.find(a => a.isActive)
-  console.log('activeAccount', activeAccount)
   const stencil = useStencil(activeOpenapiUrl === 'local' ? originalStencil.doc : openapiDoc.data, {
     ...originalStencil.config,
     server: {url: activeServerUrl},

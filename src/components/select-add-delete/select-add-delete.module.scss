@@ -1,0 +1,105 @@
+.content {
+  z-index: 4;
+  background: white;
+  border: 1px solid #efefef;
+  border-radius: 10px;
+  min-width: 13em;
+  max-height: 40em;
+  overflow: auto;
+}
+
+.trigger {
+  outline: none;
+  border: 1px solid #efefef;
+  background: white;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+
+  span {
+    font-weight: 700;
+  }
+}
+
+.option {
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0.5em 1em;
+  text-align: left;
+
+  &:hover {
+    background: rgba(162, 184, 193, 0.15);
+  }
+}
+
+.current {
+  padding: 0.5em 1em;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  span {
+    font-weight: 700;
+  }
+
+}
+
+.text-button {
+  outline: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #aeaeae;
+}
+
+button.add {
+  color: #aeaeae;
+}
+
+.other-list {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.add-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+}
+
+.second-menu {
+  padding: 0.5em;
+}
+
+.add-form {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  padding-top: 0.5em;
+  gap: 0.5em;
+
+  input {
+    outline: none;
+    // border: 1px solid #cacaca;
+    border: 1px solid rgba(162, 184, 193, 0.15);
+    background: rgba(162, 184, 193, 0.15);
+    border-radius: 5px;
+    padding: 0.25em 0.5em;
+  }
+
+  button {
+    outline: none;
+    cursor: pointer;
+    background: none;
+    border: 1px solid #dfdfdf;
+    // background: rgba(135, 155, 164, 0.35);
+    // border: none;
+    border-radius: 5px;
+    padding: 0.25em 0.5em;
+  }
+}
+
