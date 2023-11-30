@@ -20,5 +20,5 @@ export const useStateWithLocalStorage = (name, initialValue) => {
       JSON.stringify({value})
     )
   }, [value, initialized, initialValue])
-  return [value || JSON.parse(localStorage.getItem(name))?.value, setValue]
+  return [value, setValue]
 }

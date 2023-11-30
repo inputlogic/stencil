@@ -175,6 +175,7 @@ const Options = ({
   return options.map((option) => (
     <div key={option.label}>
       <button
+        title={option.label}
         onClick={() => onClickOption(option)}
         onMouseOver={() => onMouseOver(option)}
         className={classnames(

@@ -18,6 +18,11 @@
   &.show-panel {
     transform: translateY(0);
   }
+
+  font-family: Avenir, Helvetica;
+  p, h1, h2, h3, h4, h5, h6, button, input {
+    font-family: Avenir, Helvetica;
+  }
 }
 
 .panel nav {
@@ -25,7 +30,7 @@
   overflow: auto;
   background-color: rgba(244, 244, 244, 0.8);
   backdrop-filter: blur(10px);
-  width: 14rem;
+  width: 17rem;
 }
 
 .panel nav button {
@@ -80,6 +85,14 @@
 
 .panel nav button.nested-1 {
   padding-left: 1em;
+}
+
+.panel nav button.nested-2 {
+  padding-left: 2em;
+}
+
+.panel nav button.nested-3 {
+  padding-left: 3em;
 }
 
 .react-query {

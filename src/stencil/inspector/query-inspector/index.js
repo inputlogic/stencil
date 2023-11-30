@@ -12,7 +12,6 @@ sillyFunc(unused)
 export const QueryInspector = ({name}) => {
   const {stencil} = useStencilContext()
   const token = stencil.config.useToken()
-  console.log('stencil token', token, stencil.queries[name])
   const useQuery = stencil.queries[name]
   const response = useQuery()
   return (

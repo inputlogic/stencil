@@ -4,7 +4,7 @@ import { Root, Trigger, Portal, Content } from '@radix-ui/react-popover'
 import classnames from 'classnames'
 import styles from './select-add-delete.module.scss'
 
-export const SelectAddDelete = ({ activeOption, otherOptions = [], onClickDelete, onClickOption, addComponent: AddComponent }) => {
+export const SelectAddDelete = ({ label, activeOption, otherOptions = [], onClickDelete, onClickOption, addComponent: AddComponent }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [addAnother, setAddAnother] = useState(false)
   useEffect(() => {
@@ -14,8 +14,8 @@ export const SelectAddDelete = ({ activeOption, otherOptions = [], onClickDelete
   return (
     <Root open={isOpen} onOpenChange={setIsOpen}>
       <Trigger asChild>
-        <button className={styles.trigger}>
-          Openapi Document: <span>Local</span>
+        <button className={styles.trigger} title={`Openapi Document: ${activeOption?.label}`} >
+          {label}{activeOption ? ': ' : ''}<span>{activeOption?.label}</span>
         </button>
       </Trigger>
       <Portal>
@@ -24,9 +24,17 @@ export const SelectAddDelete = ({ activeOption, otherOptions = [], onClickDelete
             <div>
               {activeOption && (
                 <div className={styles.current}>
-                  <span>{activeOption.label}</span>
+                  <span title={activeOption.label} >{activeOption.label}</span>
                   {activeOption.canDelete && (
-                    <button className={styles['text-button']}>Delete</button>
+                    <button
+                      onClick={() => {
+                        onClickDelete() 
+                        setIsOpen(false)
+                      }}
+                      className={styles['text-button']}
+                    >
+                      Delete
+                    </button>
                   )}
                 </div>
               )}
@@ -34,7 +42,10 @@ export const SelectAddDelete = ({ activeOption, otherOptions = [], onClickDelete
                 {otherOptions.map((option) => (
                   <button
                     key={option.label}
-                    onClick={() => onClickOption(option)}
+                    onClick={() => {
+                      onClickOption(option)
+                      setIsOpen(false)
+                    }}
                     className={styles.option}
                     title={option.label}
                   >

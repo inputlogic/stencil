@@ -44,6 +44,7 @@
   "dependencies": {
     "case": "^1.6.3",
     "ramda": "^0.29.1",
+    "react-markdown": "^9.0.1",
     "react18-json-view": "^0.2.6"
   }
 }

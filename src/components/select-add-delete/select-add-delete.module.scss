@@ -4,6 +4,7 @@
   border: 1px solid #efefef;
   border-radius: 10px;
   min-width: 13em;
+  max-width: 25em;
   max-height: 40em;
   overflow: auto;
 }
@@ -15,9 +16,19 @@
   cursor: pointer;
   padding: 0.5em 1em;
   border-radius: 8px;
+  max-width: 25em;
+  display: flex;
+  gap: 0.5em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   span {
     font-weight: 700;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -28,6 +39,10 @@
   cursor: pointer;
   padding: 0.5em 1em;
   text-align: left;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:hover {
     background: rgba(162, 184, 193, 0.15);
@@ -43,6 +58,10 @@
 
   span {
     font-weight: 700;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
 }

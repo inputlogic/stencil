@@ -30,3 +30,10 @@
     font-size: 12px;
   }
 }
+
+.items {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: flex-start;
+  gap: 1em;
+}
