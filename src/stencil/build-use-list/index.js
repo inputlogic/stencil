@@ -86,14 +86,15 @@ const buildSetQueryParam = ({config: {getCurrentQuery, router, id}}) => {
   })
   return {
     calculateNewQuery,
-    setQueryParam: (name, value) => {
-      router.replace(calculateNewQuery(name, value))
+    setQueryParam: (name, value, nextRouterArgs = { scroll: false }) => {
+      console.log('hiiiii', calculateNewQuery(name, value), nextRouterArgs)
+      router.replace(calculateNewQuery(name, value), undefined, nextRouterArgs)
     },
-    resetQueryParams: () => {
+    resetQueryParams: (nextRouterArgs = {scroll: false}) => {
       router.replace({
         pathname: router.pathname,
-        query: Object.fromEntries(Object.entries(getCurrentQuery()).filter(([name, value]) => !name.startsWith(`${id}.`)))
-      })
+        query: Object.fromEntries(Object.entries(getCurrentQuery()).filter(([name, value]) => !name.startsWith(`${id}.`))),
+      }, undefined, nextRouterArgs)
     }
   }
 }
