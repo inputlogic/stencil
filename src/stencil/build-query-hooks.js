@@ -1,4 +1,4 @@
-import {useQuery} from 'react-query'
+import {useQuery, useInfiniteQuery} from 'react-query'
 
 export const buildQueryHooks = (doc, stencil) => ({
     queries: Object.entries(doc.paths).reduce((acc, [path, methods]) => {
@@ -51,7 +51,7 @@ export const buildQueryHooks = (doc, stencil) => ({
                 reactQueryArgs
               ) => {
                 const token = stencil.config.useToken?.()
-                const reactQuery = stencil.config.reactQuery.useInfiniteQuery(
+                const reactQuery = useInfiniteQuery(
                   [
                     name,
                     ...Object.entries(args).flatMap((x) => x),

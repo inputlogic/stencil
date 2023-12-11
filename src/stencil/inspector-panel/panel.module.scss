@@ -1,0 +1,102 @@
+.panel {
+  display: flex;
+  position: fixed;
+  overflow: hidden;
+  transform: translateY(150vh);
+  z-index: 2;
+  top: 1em;
+  bottom: 1em;
+  left: 1em;
+  right: 1em;
+  border: 1px solid #dfdfdf;
+  border-radius: 10px;
+  transition: transform 200ms;
+
+  flex-flow: row nowrap;
+  align-items: stretch;
+
+  &.show-panel {
+    transform: translateY(0);
+  }
+
+  font-family: Avenir, Helvetica;
+  p, h1, h2, h3, h4, h5, h6, button, input {
+    font-family: Avenir, Helvetica;
+  }
+}
+
+.panel nav {
+  flex-shrink: 0;
+  overflow: auto;
+  background-color: rgba(244, 244, 244, 0.8);
+  backdrop-filter: blur(10px);
+  width: 17rem;
+}
+
+.panel nav button {
+  max-width: 100%;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  outline: none;
+  background: none;
+  border: none;
+  padding: 0.25em 0.5em;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.panel nav input {
+  outline: none;
+  background: none;
+  border: none;
+  padding: 0.5em;
+}
+
+.content {
+  flex-grow: 1;
+  background: white;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  overflow: auto;
+}
+
+.parent-of-active {
+  opacity: 0.3;
+}
+
+.panel nav button.active-option {
+  // background: rgba(211, 211, 211, 0.5);
+  // background: rgba(162, 184, 193, 0.3);
+  background: rgba(135, 155, 164, 0.3);
+
+  &.hover-option {
+    // background: rgba(121, 153, 166, 0.3);
+    background: rgba(135, 155, 164, 0.35);
+  }
+}
+
+.panel nav button.hover-option {
+  // background: rgba(211, 211, 211, 0.3);
+  background: rgba(162, 184, 193, 0.15);
+}
+
+.panel nav button.nested-1 {
+  padding-left: 1em;
+}
+
+.panel nav button.nested-2 {
+  padding-left: 2em;
+}
+
+.panel nav button.nested-3 {
+  padding-left: 3em;
+}
+
+.react-query {
+  height: 100%;
+  width: 100%;
+  flex-grow: 1;
+}

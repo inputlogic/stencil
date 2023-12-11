@@ -22,6 +22,8 @@ export const buildStrings = (doc) => {
     ].join('')
   }
 
+  const nameToOpenapiPath = name => Object.keys(doc.paths).find(path => name === pathToName(path))
+
   return {
     strings: {
       pathToName,
