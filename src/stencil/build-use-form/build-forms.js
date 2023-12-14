@@ -37,6 +37,7 @@ const buildForm = ({stencil, path, method, FormComponent, DefaultFields, FormErr
         try {
           await onSubmitProp?.(data, {reactHookFormMethods: methods})
           setMetadata((curr) => ({ ...curr, success: true }))
+          methods.reset({}, {keepValues: true})
           setTimeout(() => {
             setMetadata((curr) => ({ ...curr, success: false }))
           }, 2000)
