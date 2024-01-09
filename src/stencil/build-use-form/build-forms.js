@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {buildComponents} from './build-components'
 import {getDefaultComponent} from '../../utils/get-default-component'
@@ -31,13 +31,15 @@ const buildForm = ({stencil, path, method, FormComponent, DefaultFields, FormErr
   const Form = ({validation, onSubmit: onSubmitProp, useFormOptions = {}, ...props}) => {
     const [metadata, setMetadata] = useState({})
     const methods = useForm(useFormOptions)
+    useEffect(() => {
+      methods.reset(undefined, {keepValues: true})
+    }, [methods.isSubmitSuccessful])
     const onSubmit = async (ev) => {
       methods.clearErrors('root')
       await methods.handleSubmit(async (data) => {
         try {
           await onSubmitProp?.(data, {reactHookFormMethods: methods})
           setMetadata((curr) => ({ ...curr, success: true }))
-          methods.reset({}, {keepValues: true})
           setTimeout(() => {
             setMetadata((curr) => ({ ...curr, success: false }))
           }, 2000)
