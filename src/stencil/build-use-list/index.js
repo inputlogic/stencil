@@ -87,7 +87,6 @@ const buildSetQueryParam = ({config: {getCurrentQuery, router, id}}) => {
   return {
     calculateNewQuery,
     setQueryParam: (name, value, nextRouterArgs = { scroll: false }) => {
-      console.log('hiiiii', calculateNewQuery(name, value), nextRouterArgs)
       router.replace(calculateNewQuery(name, value), undefined, nextRouterArgs)
     },
     resetQueryParams: (nextRouterArgs = {scroll: false}) => {
