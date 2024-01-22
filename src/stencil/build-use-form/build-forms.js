@@ -62,8 +62,8 @@ const buildForm = ({stencil, path, method, FormComponent, DefaultFields, FormErr
         stencil.queries[stencil.strings.pathToQueryHook(path)](
           {
             args: { id: resourceId },
+            reactQueryArgs: { cacheTime: 0 }
           },
-          { cacheTime: 0 }
         )
       : () => [{}, {}]
     const mutation = useDefaultMutation({args: {id: resourceId}})
