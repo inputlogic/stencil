@@ -22,9 +22,11 @@ const buildForm = ({stencil, path, method, FormComponent, DefaultFields, FormErr
   const FormWithDefaultValues = ({useDefaultValues, useFormOptions = {}, ...props}) => {
     const [defaultValues, { error }] = useDefaultValues()
     if (error) {
-      return <div> TODO: Loading Error</div>
+      // TODO: make this a better error message
+      return <div>An unexpected error occured.</div>
     }
-    if (!defaultValues) return <div>TODO: Loading...</div>
+    // TODO: make this a better loading indicator
+    if (!defaultValues) return <div>Loading...</div>
     return <Form useFormOptions={{defaultValues: defaultValues, ...useFormOptions}} {...props} />
   }
 
@@ -60,8 +62,8 @@ const buildForm = ({stencil, path, method, FormComponent, DefaultFields, FormErr
         stencil.queries[stencil.strings.pathToQueryHook(path)](
           {
             args: { id: resourceId },
+            reactQueryArgs: { cacheTime: 0 }
           },
-          { cacheTime: 0 }
         )
       : () => [{}, {}]
     const mutation = useDefaultMutation({args: {id: resourceId}})
