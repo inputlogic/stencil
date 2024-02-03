@@ -1,11 +1,6 @@
 # Stencil 📐
 
-NOTE: This is beta software and is changing rapidly.
-
-Turn specifications into UI building blocks.
-
-This implementation of Stencil turns an OpenApi file into React building blocks. It does this with the help of react-hook-form and react-query.
-
+Turn openapi specifications into react building blocks.
 
 # API
 
@@ -20,7 +15,7 @@ This implementation of Stencil turns an OpenApi file into React building blocks.
 
 ## buildStencil
 
-Create a new stencil
+Create a new stencil `buildStencil(openapiDoc, options)`
 
 ### Parameters
 
@@ -36,10 +31,21 @@ Create a new stencil
             -   `component` **Function**: A function that returns a React component for loading.
     -   `useForm` **Object**: Configuration for form fields, buttons, errors, and forms.
         -   `errorHandler` **Function**: A function to handle form errors.
-        -   `fields` **Array of [ComponentDefinitions](#ComponentDefinition)**: An array of field component definitions.
-        -   `buttons` **Array of [ComponentDefinitions](#ComponentDefinition)**: An array of component definitions.
-        -   `formErrors` **Array of [ComponentDefinitions](#ComponentDefinition)**: An array of component definitions.
-        -   `forms` **Array of [ComponentDefinitions](#ComponentDefinition)**: An array of component definitions.
+        -   `fields` **Array of [ComponentDefinition](#ComponentDefinition)**: An array of field component definitions.
+        -   `buttons` **Array of [ComponentDefinition](#ComponentDefinition)**: An array of component definitions.
+        -   `formErrors` **Array of [ComponentDefinition](#ComponentDefinition)**: An array of component definitions.
+        -   `forms` **Array of [ComponentDefinition](#ComponentDefinition)**: An array of component definitions.
+    -   `useList` **Object**: Configuration for lists
+        -   `defaultPageSize` **Positive Integer**: How many results to show per page by default.
+        -   `emptyStates` **[ComponentDefinition]**: Components to use for list empty states.
+        -   `loaders` **[ComponentDefinition]**: Components to use for loading states.
+        -   `loadingErrors` **[ComponentDefinition]**: Components to use for when loading fails.
+        -   `paginations` **[ComponentDefinition]**: Components to use for pagination. The component will be provided with the following props:
+            -   `useQuery`
+            -   `setQueryParam`
+            -   `useQueryCount`
+            -   `useQueryParam`
+            -   `calculateNewQuery`
 
 ## ComponentDefinition
 
@@ -87,4 +93,18 @@ TODO: add documentation about stencil.queries
 
 #### useListOptions
 
--   `additionalFilters` TODO
+-   `additionalFilters` **[Filter](#OpenAPIQueryParam)**: Add filters that are not included in the open api document.
+-   `id` **String**: This is used to namespace query param args. Eg. if id is `foo` then a query param would look like `?foo.bar=1&foo.baz=2`
+-   `useQuery` **Hook** 
+-   `loader` **String**: The name of the loader to use.
+-   `emptyState` **String**: The name of the emptyState to use.
+-   `defaultQueries` **Object**: The default queries to use.
+
+#### OpenAPIQueryParam
+
+This is an object that looks the same as an openapi query param, for example:
+
+```
+{ name: 'is_notable', value: 'true', schema: { type: 'string' } }
+```
+
