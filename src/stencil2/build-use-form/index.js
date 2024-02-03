@@ -5,7 +5,6 @@ import {buildButtons} from './build-buttons'
 import {buildFormErrors} from './build-form-errors'
 import {buildForm} from './build-form'
 
-
 export const buildUseForm = (stencil) => ({
   useForm: ({
     path,
@@ -19,7 +18,7 @@ export const buildUseForm = (stencil) => ({
   }) => {
     const [token, {isLoading: isLoadingToken}] = useToken()
     const methods = useForm({
-      defaultValues: async () => await fetch({path, args}), // TODO: figure out default values, figure out error handling
+      defaultValues: async () => await stencil.fetch({path, args}), // TODO: figure out default values, figure out error handling
       ...reactHookFormArgs
     })
     const stuff = useMemo(
@@ -38,11 +37,11 @@ export const buildUseForm = (stencil) => ({
           ...build(acc, stencil)
         }), {config: {properties, path, method, anyTheme, theme}})
       },
-      [path, method]
+      [path, method, ...Object.values(args)]
     )
     return {
       ...stuff,
-      Form: (props) => stuff.Form({methods, ...props}),
+      Form: useMemo(() => (props) => stuff.Form({methods, ...props}), [methods, stuff]),
       methods
     }
   }

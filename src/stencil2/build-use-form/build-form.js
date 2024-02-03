@@ -3,7 +3,7 @@ import { FormProvider } from 'react-hook-form'
 
 // TODO: look into error boundary for defaultValues error
 export const buildForm = (formArgs, stencil) => {
-  const onSubmit = stencil.config.useForm?.onSubmit(formArgs, stencil)
+  const onSubmit = stencil.config.useForm?.onSubmit?.(formArgs, stencil)
   // TODO: Calculate Base Form 
   const FormComponent = props => <form {...props}/>
   return {

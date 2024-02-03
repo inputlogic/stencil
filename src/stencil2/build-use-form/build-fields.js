@@ -1,7 +1,8 @@
+import * as Case from 'case'
 import {getPriority} from '../../utils/get-priority'
 
 export const buildFields = ({config: {properties}}, stencil) => {
-  const Fields = buildAllFields = ({properties, stencil})
+  const Fields = buildAllFields({properties, stencil})
   return {
     Fields
   }
@@ -28,7 +29,8 @@ const buildAllFields = ({properties, stencil, prefixes = []}) => {
             stencil
           })
         }
-    })
+    }),
+    {}
   )
 }
 
