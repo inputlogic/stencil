@@ -1,12 +1,17 @@
-export const buildFetch = ({url, config}) => ({
-  fetch: async ({path, args, queries, body, token, headers, ...rest}) => {
+export const buildFetch = ({openapi, url, config}) => ({
+  fetch: async ({path, method = 'get', args, queries, body, token, headers, ...rest}) => {
+    if (!openapi.paths[path]?.[method]) {
+      console.warn('Openapi document does not include path:', path, 'and method:', method)
+    }
     const resp = await fetch(url({path, args, queries}), {
+      method: method.toUpperCase(),
       headers: {
         // TODO: consider making config able to pass a function to calculate default headers
         // eg. if there is a token, include Authorization
-        ...(config.fetch?.headers?.({path, args, queries, body, token, headers, ...rest}) || {}),
+        ...(config.fetch?.headers?.({path, method, args, queries, body, token, headers, ...rest}) || {}),
         ...headers
-      }
+      },
+      ...(body ? {body: JSON.stringify(body)} : {})
     })
     const result = await parseResponse(resp)
     if (!resp.ok) {

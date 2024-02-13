@@ -1,15 +1,23 @@
+import {useEffect} from 'react'
 import {useQuery} from '@tanstack/react-query'
 
-export const buildUseQuery = ({fetch, config}) => ({
+export const buildUseQuery = ({openapi, fetch, config}) => ({
   useQuery: ({
     path,
+    method = 'get',
     args = {},
     queries = {},
-    useToken = config.useQuery?.useToken || (() => [null, {isLoading: false}]),
+    useToken = config.useToken || (() => [null, {isLoading: false}]),
     reactQueryArgs: {enabled = true, ...reactQueryArgs} = {enabled: true}
   }) => {
     // TODO: validate path exists
+    useEffect(() => {
+      if (!openapi.paths[path]?.[method]) {
+        console.warn('Openapi document does not include path:', path, 'and method:', method)
+      }
+    }, [path, method])
     const [token, {isLoading: isLoadingToken}] = useToken()
+    console.log('hmmm', token)
     const reactQuery = useQuery({
       queryKey: [
         path,
