@@ -10,14 +10,12 @@ export const buildUseQuery = ({openapi, fetch, config}) => ({
     useToken = config.useToken || (() => [null, {isLoading: false}]),
     reactQueryArgs: {enabled = true, ...reactQueryArgs} = {enabled: true}
   }) => {
-    // TODO: validate path exists
     useEffect(() => {
       if (!openapi.paths[path]?.[method]) {
         console.warn('Openapi document does not include path:', path, 'and method:', method)
       }
     }, [path, method])
     const [token, {isLoading: isLoadingToken}] = useToken()
-    console.log('hmmm', token)
     const reactQuery = useQuery({
       queryKey: [
         path,

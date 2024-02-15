@@ -22,7 +22,7 @@ export const buildUseForm = stencil => ({
     buttonProps = {children: 'Submit'},
     ...rest
   }) => {
-    const {properties, defaultValues, useMutationDefault, Fields, DefaultFields, Button, Buttons, LoadingIndicator, LoadingIndicators, FormError, FormErrors} = useMemo(() => {
+    const {properties, defaultValues, useMutationDefault, Fields, DefaultFields, Button, Buttons, LoadingIndicator, LoadingIndicators, FormError, FormErrors, BaseForm, BaseForms} = useMemo(() => {
       const properties = getProperties(stencil, {config: {path, method, additionalFields}})
       const defaultValues = buildDefaultValues(stencil, {config: {path, method, args, queries}})
       const useMutationDefault = buildUseMutation(stencil, {config: {path, method}})
