@@ -28,7 +28,6 @@ export const buildUseForm = stencil => ({
       const useMutationDefault = buildUseMutation(stencil, {config: {path, method}})
       const Fields = buildFields({stencil, properties})
       const DefaultFields = buildDefaultFields({Fields, theme, anyTheme})
-      // const {Button, Buttons} = buildButtons(stencil, {config: {theme: anyTheme}})
       const [Button, Buttons] = buildComponentVariations({stencil, definitions: stencil.config.useForm?.buttons, theme, anyTheme})
       const [LoadingIndicator, LoadingIndicators] = buildComponentVariations({stencil, definitions: stencil.config.useForm?.loadingIndicators, theme, anyTheme})
       const [FormError, FormErrors] = buildComponentVariations({stencil, definitions: stencil.config.useForm?.formErrors, theme, anyTheme})
@@ -100,9 +99,13 @@ const getProperties = (stencil, {config: {path, method, additionalFields}}) => (
   ...additionalFields
 })
 
-const buildDefaultValues = (stencil, {config: {path, method, args, queries}}) =>
+const buildDefaultValues = (stencil, {config: {path, method, args = {}, queries = {}}}) =>
   async () => {
     if (!path.includes('{')) return {}
+    if (Object.entries(args).length === 0) {
+			console.warn('Missing url query args to fetch default values. path', path, 'args', args)
+			return {}
+		}
     const token = await stencil.config.getToken()
     const result = await stencil.fetch({path, args, queries, token})
     return result
