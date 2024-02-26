@@ -1,4 +1,3 @@
-import { ReactQueryDevtoolsPanel } from 'react-query/devtools'
 import { useState, useEffect, forwardRef, useRef, useMemo } from 'react'
 import fuzzy from 'fuzzy'
 import classnames from 'classnames'
@@ -154,13 +153,7 @@ const FAKE_OPTIONS = [
         component: () => <h2>usePublicSitesSites</h2>,
       },
     ],
-  },
-  {
-    label: 'react query',
-    component: () => (
-      <ReactQueryDevtoolsPanel className={styles['react-query']} />
-    ),
-  },
+  }
 ]
 
 const Options = ({

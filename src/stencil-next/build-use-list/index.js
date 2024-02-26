@@ -1,5 +1,5 @@
 import * as Case from 'case'
-import {useRouter} from 'next/router'
+import {useRouter} from 'next/router.js'
 import {useMemo, useRef} from 'react'
 import {buildFilters} from './build-filters'
 import {buildComponents} from '../../utils/build-components'
