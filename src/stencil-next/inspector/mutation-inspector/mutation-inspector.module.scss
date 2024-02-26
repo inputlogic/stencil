@@ -1,0 +1,18 @@
+.mutation-inspector {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1em;
+
+  h5 {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: Avenir, Helvetica;
+    padding: 0;
+    margin: 0;
+  }
+
+  p {
+    padding: 0;
+    margin: 0;
+  }
+}
