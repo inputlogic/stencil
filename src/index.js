@@ -1,6 +1,6 @@
 
-export { buildStencil } from './stencil/build-stencil'
-export { buildStencil as buildStencilNext } from './stencil-next'
+export { buildStencil } from './stencil'
+export { buildStencil as buildStencilLegacy } from './stencil-legacy/build-stencil'
+export { Inspector as InspectorLegacy } from './stencil-legacy/inspector'
+export { InspectorPanel } from './stencil/inspector/inspector-panel'
 export { Inspector } from './stencil/inspector'
-export { InspectorPanel } from './stencil-next/inspector/inspector-panel'
-export { Inspector as InspectorNext } from './stencil-next/inspector'

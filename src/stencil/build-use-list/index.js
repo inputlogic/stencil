@@ -6,8 +6,9 @@ import {buildComponents} from '../../utils/build-components'
 
 const DEFAULT_PAGE_SIZE = 20
 
-export const buildUseList = (doc, stencil) => ({
-  useList: (name, {
+export const buildUseList = (stencil) => ({
+  useList: ({
+    path,
     theme = 'default',
     anyTheme = true,
     id,
@@ -20,7 +21,7 @@ export const buildUseList = (doc, stencil) => ({
   } = {}) => {
     const baseQueries = {limit: stencil.config.useList?.defaultPageSize || DEFAULT_PAGE_SIZE}
     defaultQueries = {...baseQueries, ...defaultQueries}
-    id = id || name
+    id = id || 'idNotProvided'
     const router = useRouter()
     /*
      * Inside of useMemo there are functions that need to access the current router.query values
@@ -33,11 +34,10 @@ export const buildUseList = (doc, stencil) => ({
     routerRef.current = router
     return useMemo(
       () => {
-        const path = stencil.strings.nameToOpenapiPath(name)
-        if (!path) {
-          throw Error(`No endpoint named ${name}`)
+        if (!stencil.openapi.paths[path]?.get) {
+          throw Error(`No path ${path} with GET method`)
         }
-        const properties = [...doc.paths[path].get.parameters || [], ...additionalFilters]
+        const properties = [...stencil.openapi.paths[path].get.parameters || [], ...additionalFilters]
 
         const builders = [
           buildSetQueryParam,
@@ -57,7 +57,7 @@ export const buildUseList = (doc, stencil) => ({
           ...builder(acc, stencil)
         }), {config: {
           properties,
-          name,
+          path,
           theme,
           anyTheme,
           getCurrentQuery: () => routerRef.current.query,
@@ -70,7 +70,7 @@ export const buildUseList = (doc, stencil) => ({
           emptyState,
         }})
       },
-      [name]
+      [path]
     )
   }
 })
@@ -111,7 +111,8 @@ const buildUseQueryParam = ({config: {id, defaultQueries}}) => ({
 })
 
 const buildUseQuery = ({config: {router, id, useQueryProvided, path, defaultQueries}, useQueryParam}, stencil) => {
-  const useBaseQuery = useQueryProvided || stencil.queries[stencil.strings.pathToQueryHook(path)]
+  const useQueryDefault = args => stencil.useQuery({path, ...args})
+  const useBaseQuery = useQueryProvided || useQueryDefault
   return {
     useQuery: ({queries: customQueries = {}, ...rest} = {}) => {
       const limit = useQueryParam('limit')
@@ -127,10 +128,10 @@ const buildUseQuery = ({config: {router, id, useQueryProvided, path, defaultQuer
 // on page change.
 const buildUseQueryCount = ({useQuery, useQueryCount}, stencil) => ({
   useQueryCount: () => {
-    const [_, { count }] = useQuery({
+    const [result] = useQuery({
       queries: { limit: 0, offset: 0 },
     })
-    return count
+    return stencil.config.useList.countFromResult(result)
   }
 })
 
@@ -151,12 +152,13 @@ const noNulls = (obj) =>
     return acc
   }, {})
 
-const buildList = ({useQuery, EmptyState, Loader, LoadingError, AllLoaders, AllEmptyStates, config: {loader, emptyState, theme}}) => ({
+const buildList = ({useQuery, EmptyState, Loader, LoadingError, AllLoaders, AllEmptyStates, config: {loader, emptyState, theme}}, stencil) => ({
     List: ({queries, children, ...props}) => {
       // TODO: refactor finding the empty state and loader components
       const LoaderComponent = getLoaderComponent({AllLoaders, DefaultLoader: Loader, theme, loader})
       const EmptyStateComponent = getEmptyStateComponent({AllEmptyStates, DefaultEmptyState: EmptyState, theme, emptyState})
-      const [results, {error, isLoading}] = useQuery({queries})
+      const [result, {error, isLoading}] = useQuery({queries})
+      const results = stencil.config.useList.listFromResult(result)
       const Child = children
       if (!EmptyState) {
         console.warn('no EmptyState component found. Please add at least one to config.useList.emptyStates')

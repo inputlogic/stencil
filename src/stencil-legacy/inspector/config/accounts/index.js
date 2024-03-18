@@ -6,22 +6,15 @@ const AddAccount = ({
   setAccounts,
 }) => {
   const [addAccountOpen, setAddAccountOpen] = useState(false)
-  const loginMutation = stencil.useMutation({
-    path: '/public/user/login'
-  })
-  // const loginMutation = stencil.mutations.usePublicUserLoginMutation()
-  // const LoginForm = stencil.useForm('publicUserLogin', 'post')
-  const LoginForm = stencil.useForm({
-    path: '/public/user/login',
-    method: 'post',
-    onValid: async ({ data: { email, username, password } }) => {
-      const response = await loginMutation.mutateAsync({ email, username, password })
-      const updatedAccounts = [...accounts, { email: email || username, token: response.token }]
-      setAccounts(updatedAccounts)
-      setAddAccountOpen(false)
-    }
-  })
+  const loginMutation = stencil.mutations.usePublicUserLoginMutation()
+  const LoginForm = stencil.useForm('publicUserLogin', 'post')
   const Fields = LoginForm.Fields
+  const onSubmit = async ({ email, username, password }) => {
+    const response = await loginMutation.mutateAsync({ email, username, password })
+    const updatedAccounts = [...accounts, { email: email || username, token: response.token }]
+    setAccounts(updatedAccounts)
+    setAddAccountOpen(false)
+  }
   return (
     <LoginForm.Form onSubmit={onSubmit} />
   )
@@ -33,7 +26,6 @@ export const Accounts = ({stencil, accounts, setAccounts}) => {
     setAccounts(updatedAccounts)
   }
   const onClickSetActive = (account) => {
-    console.log('on click set active', account, accounts)
     const updatedAccounts = accounts.map(({ email, ...rest }) => ({
       ...rest,
       email,
